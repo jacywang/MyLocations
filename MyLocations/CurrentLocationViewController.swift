@@ -32,8 +32,36 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     }
     
     @IBAction func getLocation() {
-    
+        let authStatus: CLAuthorizationStatus = CLLocationManager.authorizationStatus()
+        if authStatus == .NotDetermined {
+            locationManager.requestWhenInUseAuthorization()
+            return
+        }
+        
+        if authStatus == .Denied || authStatus == .Restricted {
+            showLocationServiceDeniedAlert()
+            return
+        }
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.startUpdatingLocation()
     }
-
+    
+    func showLocationServiceDeniedAlert() {
+        let alert = UIAlertController(title: "Location Service Disabled", message: "Please enable location services for this ap in Settings.", preferredStyle: .Alert)
+        let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+        alert.addAction(okAction)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    // MARK: - CLLocationManagerDelegate
+    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+        println("didFailWithError \(error)")
+    }
+    
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+        let newLocation = locations.last as CLLocation
+        println("didUpdateLocations \(newLocation)")
+    }
 }
-

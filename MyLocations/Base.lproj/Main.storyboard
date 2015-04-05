@@ -67,6 +67,9 @@
                                 <state key="normal" title="Get My Location">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="getLocation" destination="9pv-A4-QxB" eventType="touchUpInside" id="QNK-G4-Vfe"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -74,7 +77,7 @@
                     <tabBarItem key="tabBarItem" title="Tag" image="first" id="acW-dT-cKf"/>
                     <connections>
                         <outlet property="addressLabel" destination="0St-j4-Y73" id="1i7-hx-Nz4"/>
-                        <outlet property="getButton" destination="UzR-Cv-fN7" id="aCb-jQ-VHU"/>
+                        <outlet property="getButton" destination="UzR-Cv-fN7" id="Zhl-fW-vxQ"/>
                         <outlet property="latitudeLabel" destination="Bc1-bg-gcA" id="yBw-4b-z2z"/>
                         <outlet property="longitudeLabel" destination="NwQ-JQ-PIA" id="dMI-X2-gSW"/>
                         <outlet property="messageLabel" destination="JmR-5A-Z6D" id="vIB-zr-FRd"/>
