@@ -28,6 +28,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         updateLabels()
+        configureGetButton()
     }
 
     override func didReceiveMemoryWarning() {
@@ -47,8 +48,16 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             return
         }
         
-        startLocationManager()
+        if updatingLocation {
+            stopLocationManager()
+        } else {
+            location = nil
+            lastLocationError = nil
+            startLocationManager()
+        }
+        
         updateLabels()
+        configureGetButton()
     }
     
     func showLocationServiceDeniedAlert() {
@@ -105,6 +114,14 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         }
     }
     
+    func configureGetButton() {
+        if updatingLocation {
+            getButton.setTitle("Stop", forState: .Normal)
+        } else {
+            getButton.setTitle("Get My Location", forState: .Normal)
+        }
+    }
+    
     // MARK: - CLLocationManagerDelegate
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
         println("didFailWithError \(error)")
@@ -117,14 +134,31 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         
         stopLocationManager()
         updateLabels()
+        configureGetButton()
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         let newLocation = locations.last as CLLocation
         println("didUpdateLocations \(newLocation)")
         
-        lastLocationError = nil
-        location = newLocation
-        updateLabels()
+        if newLocation.timestamp.timeIntervalSinceNow < -5 {
+            return
+        }
+        
+        if newLocation.horizontalAccuracy < 0 {
+            return
+        }
+        
+        if location == nil || location!.horizontalAccuracy > newLocation.horizontalAccuracy {
+            lastLocationError = nil
+            location = newLocation
+            updateLabels()
+            
+            if newLocation.horizontalAccuracy <= locationManager.desiredAccuracy {
+                println("*** We're done!")
+                stopLocationManager()
+                configureGetButton()
+            }
+        }
     }
 }
